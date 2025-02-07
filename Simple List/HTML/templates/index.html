@@ -3,32 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Preços Futuros - Binance</title>
-    <style>
-        body { font-family: Arial, sans-serif; background-color: #f8f9fa; margin: 40px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
-        th { background-color: #007bff; color: white; }
-        tr:hover { background-color: #f1f1f1; }
-    </style>
+    <title>Preços Futuros e EMAs</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <h1>Preços Futuros da Binance</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Par</th>
-                <th>Preço</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for preco in precos %}
-            <tr>
-                <td>{{ preco.symbol }}</td>
-                <td>{{ preco.price }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="container my-5">
+        <h1 class="text-center mb-4">Preços Futuros e EMAs (M5)</h1>
+        
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Par</th>
+                    <th>Preço</th>
+                    <th>EMA 8</th>
+                    <th>EMA 21</th>
+                    <th>EMA 233</th>
+                    <th>Condição</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for preco in precos %}
+                <tr>
+                    <td>
+                        <a href="https://www.binance.com/en/futures/{{ preco.symbol }}" target="_blank">
+                            {{ preco.symbol }}
+                        </a>
+                    </td>
+                    <td>{{ preco.price }}</td>
+                    <td>{{ preco.ema_8 }}</td>
+                    <td>{{ preco.ema_21 }}</td>
+                    <td>{{ preco.ema_233 }}</td>
+                    <td>
+                        {% if preco.ema_8 > preco.ema_21 > preco.ema_233 %}
+                            <img src="/static/img/up.jpg" alt="Strong Up" width="32">
+                        {% elif preco.ema_8 < preco.ema_21 < preco.ema_233 %}
+                            <img src="/static/img/down.jpg" alt="Strong Down" width="32">
+                        {% elif preco.ema_8 > preco.ema_233 and preco.ema_21 > preco.ema_233 and preco.ema_8 < preco.ema_21 %}
+                            <img src="/static/img/up_correction.jpg" alt="Correction Up" width="32">
+                        {% elif preco.ema_8 < preco.ema_233 and preco.ema_21 < preco.ema_233 and preco.ema_8 > preco.ema_21 %}
+                            <img src="/static/img/down_correction.jpg" alt="Correction Down" width="32">
+                        {% elif preco.ema_8 > preco.ema_233 and preco.ema_21 < preco.ema_233 %}
+                            <img src="/static/img/up_reversion.jpg" alt="Reversion Up" width="32">
+                        {% elif preco.ema_8 < preco.ema_233 and preco.ema_21 > preco.ema_233 %}
+                            <img src="/static/img/down_reversion.jpg" alt="Reversion Down" width="32">
+                        {% else %}
+                            <img src="/static/img/neutral.jpg" alt="Neutral" width="32">
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
